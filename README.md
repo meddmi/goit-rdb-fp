@@ -34,6 +34,13 @@ script header.
 1. **Load data.** Schema `pandemic` is created and set as default (`CREATE SCHEMA IF NOT EXISTS pandemic;
    SET search_path TO pandemic;`). The CSV is imported into `pandemic.infectious_cases`
    (10,521 rows, 245 entities, 1920-2023). All raw columns are `TEXT`, missing values are empty strings.
+
+   ![Preview the data](screenshots/Task1_Preview_the_data.png)
+
+   ![Profile the data](screenshots/Task1_Profile_the_data.png)
+
+   ![Check that indicator columns](screenshots/Task1_Check_that_indicator_columns.png)
+
 2. **Normalization to 3NF.** `Entity -> Code` is a partial dependency on the key `(Entity, Year)`, so the
    table is split into
    * `entities (entity_id, entity_name, entity_code)` - unique Entity + Code combinations (245 rows);
@@ -41,13 +48,36 @@ script header.
      Code, primary key `(entity_id, year)` (10,521 rows), typed as `NUMERIC` with empty strings as `NULL`.
 
    A lossless check confirms that joining the tables back gives the original data.
+
+   ![Preview entities](screenshots/Task2_Preview_entities.png)
+
+   ![Preview disease cases](screenshots/Task2_Preview_disease_cases.png)
+
+   ![Compare row counts of raw and normalized tables](screenshots/Task2_Compare_row_counts_of_raw_and_normalized_tables.png)
+
 3. **Analysis.** Average, minimum, maximum and sum of `number_rabies` per Entity + Code, sorted by the
    average in descending order, top 10 rows.
+
+   ![Rabies avg, min, max, sum per entity, top 10 by average](screenshots/Task3_Rabies_avg_min_max_sum_per_entity_top_10_by_average.png)
+
+   ![Same, countries only](screenshots/Task3_Rabies_avg_min_max_sum_per_entity_top_10_by_average_country_only.png)
+
 4. **Year difference column.** `MAKE_DATE(year, 1, 1)`, `CURRENT_DATE` and
    `EXTRACT(YEAR FROM AGE(CURRENT_DATE, MAKE_DATE(year, 1, 1)))`.
+
+   ![Year difference column with built-in functions](screenshots/Task4_Year_difference_column_with_built-in_functions.png)
+
 5. **Functions.**
    * `fn_years_since(year)` - difference in years between today and January 1st of the year;
    * `fn_avg_cases_per_period(cases_per_year, divisor)` - average cases per period, tested with the
      divisors 12 (month), 4 (quarter) and 2 (half-year) on records with numeric rabies values.
+
+   ![Test fn_years_since on 1996](screenshots/Task5_Test_fn_years_since_on_1996.png)
+
+   ![Test divisors 12, 4, 2](screenshots/Task5_Test_divisors_12-month_4-quarter_2-half-year.png)
+
+   ![Use fn_years_since on the table](screenshots/Task5_Use_fn_years_since_on_the_table.png)
+
+   ![Use both functions on numeric rabies records](screenshots/Task5_Use_both_functions_on_numeric_rabies_records.png)
 
 Both functions are used in queries on the normalized tables.
